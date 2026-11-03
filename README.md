@@ -1,4 +1,4 @@
-# Album Shelf — for Spotify
+# Album Shelf (for Spotify)
 
 A CD shelf for your Spotify library, built to run full-screen on a spare tablet.
 
@@ -16,7 +16,7 @@ It's a single `index.html` with no build step and no server code. Everyone runs 
 
 1. **Fork this repository** to your own GitHub account.
 2. **Add the Spotify logo.** Spotify requires its logo next to its content. Download the full logo from [Spotify's design guidelines](https://developer.spotify.com/documentation/design), and add the white version to the repository as `spotify-logo.svg` or `spotify-logo.png`. Until you do, the shelf shows an empty placeholder where the logo goes.
-3. **Turn on GitHub Pages.** In this repository go to **Settings → Pages**, set the source to *Deploy from a branch*, and choose `main` and `/ (root)`. After a minute the site appears at `https://<your-username>.github.io/spotify-shelves/`.
+3. **Turn on GitHub Pages.** In this repository go to **Settings → Pages**, set the source to *Deploy from a branch*, and choose `main` and `/ (root)`. After a minute the site appears at `https://<your-username>.github.io/album-shelf-for-spotify/`.
 4. **Create a Spotify app.** At [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard), create an app and tick **Web API**.
 5. **Add the redirect URI.** Open your Pages address, tap the settings (gear) button, and copy the redirect URI it shows. Paste it into the Spotify app's **Redirect URIs** field exactly as shown, then save.
 6. **Connect.** Copy the app's **Client ID** into the shelf's settings and tap **Connect Spotify**.
