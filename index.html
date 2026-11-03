@@ -126,18 +126,19 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
 /* face-out = the front of a jewel case. Two kinds, as in a real collection:
    grey  - black tray, grey plastic hinge strip with fine vertical ribbing
    clear - clear tray (pale behind the cover), clear perspex hinge strip */
-.spine.face{width:calc(var(--row-h) - 26px);margin:0 12px 0 10px;border-radius:3px;background:#141110;
+.spine.face{--fh:calc(var(--row-h) - 26px);--fb:calc(var(--fh) * .024);--strip:calc(var(--fh) * .12);
+  width:calc(var(--fh) * 1.136);margin:0 12px 0 10px;border-radius:3px;background:#141110;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 14px 30px rgba(0,0,0,.65),0 0 60px var(--glow,rgba(0,0,0,0))}
 .spine.face.case-clear{background:linear-gradient(135deg,#e4e6e7,#cdd1d3)}
-.spine.face .art{opacity:1;left:9.6%;top:2.4%;right:2.4%;bottom:2.4%;width:auto;height:auto;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.spine.face .art{opacity:1;left:auto;top:var(--fb);right:var(--fb);bottom:auto;width:calc(var(--fh) - 2 * var(--fb));height:calc(var(--fh) - 2 * var(--fb));object-fit:contain;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 /* the clear lid: raised rim, a step where it meets the hinge, and a soft diagonal reflection */
 .spine.face::before{z-index:1;border-radius:3px;
   background:
     linear-gradient(125deg,rgba(255,255,255,.26),rgba(255,255,255,.07) 24%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 72%,rgba(255,255,255,.09) 86%,rgba(255,255,255,0)),
-    linear-gradient(90deg,rgba(0,0,0,0) 8.6%,rgba(0,0,0,.35) 8.6%,rgba(0,0,0,.35) 8.9%,rgba(255,255,255,.4) 8.9%,rgba(255,255,255,.4) 9.2%,rgba(0,0,0,0) 9.2%);
+    linear-gradient(90deg,rgba(0,0,0,0) var(--strip),rgba(0,0,0,.35) var(--strip),rgba(0,0,0,.35) calc(var(--strip) + 1px),rgba(255,255,255,.4) calc(var(--strip) + 1px),rgba(255,255,255,.4) calc(var(--strip) + 2px),rgba(0,0,0,0) calc(var(--strip) + 2px));
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.34),inset 0 0 0 2px rgba(0,0,0,.18),inset 0 0 0 4px rgba(255,255,255,.06)}
 /* hinge strip running the full height of the left edge */
-.spine.face::after{content:"";display:block;position:absolute;z-index:1;left:0;top:0;bottom:0;width:8.6%;height:auto;margin:0;border-radius:3px 0 0 3px;box-shadow:none;
+.spine.face::after{content:"";display:block;position:absolute;z-index:1;left:0;top:0;bottom:0;width:var(--strip);height:auto;margin:0;border-radius:3px 0 0 3px;box-shadow:none;
   background:
     repeating-linear-gradient(90deg,rgba(255,255,255,.26) 0 1px,rgba(0,0,0,.2) 1px 2px,rgba(0,0,0,0) 2px 3px),
     linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0) 18%,rgba(0,0,0,0) 85%,rgba(0,0,0,.18)),
@@ -147,7 +148,7 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
     linear-gradient(90deg,rgba(255,255,255,.9) 0 1px,rgba(0,0,0,0) 1px 24%,rgba(120,126,130,.45) 24% calc(24% + 1px),rgba(255,255,255,.7) calc(24% + 1px) calc(24% + 2px),rgba(0,0,0,0) calc(24% + 2px) 66%,rgba(120,126,130,.4) 66% calc(66% + 1px),rgba(255,255,255,.6) calc(66% + 1px) calc(66% + 2px),rgba(0,0,0,0) calc(66% + 2px)),
     linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 20%,rgba(0,0,0,0) 85%,rgba(0,0,0,.08)),
     linear-gradient(90deg,#eef0f1,#d6dadc 50%,#e2e5e6)}
-.spine.face .face-ui{opacity:1;pointer-events:auto;z-index:2;left:9.6%}
+.spine.face .face-ui{opacity:1;pointer-events:auto;z-index:2;left:auto;right:var(--fb);bottom:var(--fb);width:calc(var(--fh) - 2 * var(--fb))}
 .spine.face .txt,.spine.face .foot{opacity:0}
 .spine.face.lift{transform:none}
 .pill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:17px;background:rgba(20,17,15,.62);
