@@ -63,7 +63,7 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
   display:flex;flex-direction:column;justify-content:center;padding:0}
 #shelf::-webkit-scrollbar{display:none}
 /* Bookcase: one wooden case holding every shelf, so all shelves share a width */
-#case{position:relative;flex:none;width:max-content;min-width:100%;padding:var(--case-top) var(--post) 0;display:flex;flex-direction:column;isolation:isolate}
+#case{position:relative;flex:none;width:max-content;min-width:100%;padding:var(--case-top) var(--post) 4px;display:flex;flex-direction:column;isolation:isolate}
 #case::before,#case::after{content:"";position:absolute;top:0;bottom:0;width:var(--post);z-index:3;
   background:var(--grain-v),linear-gradient(90deg,#6e4528,#9a6a41 30%,#a87749 55%,#7d4f2d 85%,#5a381f);
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
@@ -97,7 +97,7 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
     var(--c,#555);
   color:var(--t,#fff);display:flex;align-items:center;justify-content:center;
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.32),0 2px 3px rgba(0,0,0,.5);
-  transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .2s,width .5s cubic-bezier(.2,.8,.2,1),margin .5s cubic-bezier(.2,.8,.2,1),box-shadow .4s;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .2s,width .5s cubic-bezier(.2,.8,.2,1),height .5s cubic-bezier(.2,.8,.2,1),margin .5s cubic-bezier(.2,.8,.2,1),box-shadow .4s;
   overflow:hidden;cursor:pointer;outline:none}
 /* the plastic: bevelled edges, a sharp specular streak and a fainter second reflection */
 .spine::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
@@ -127,11 +127,12 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
    grey  - black tray, grey plastic hinge strip with fine vertical ribbing
    clear - clear tray (pale behind the cover), clear perspex hinge strip */
 .spine.face{--fh:calc(var(--row-h) - 26px);--fb:calc(var(--fh) * .024);--strip:calc(var(--fh) * .12);
-  width:calc(var(--fh) * 1.136);margin:0 12px 0 10px;border-radius:3px;background:#141110;
+  width:calc(var(--fh) * 1.136);height:var(--fh);margin:0 12px 0 10px;border-radius:3px;background:#141110;overflow:visible;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 14px 30px rgba(0,0,0,.65),0 0 60px var(--glow,rgba(0,0,0,0))}
 .spine.face.case-clear{background:linear-gradient(135deg,#e4e6e7,#cdd1d3)}
-.spine.face .art{opacity:1;left:auto;top:var(--fb);right:var(--fb);bottom:auto;width:calc(var(--fh) - 2 * var(--fb));height:calc(var(--fh) - 2 * var(--fb));object-fit:contain;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
-/* the clear lid: raised rim, a step where it meets the hinge, and a soft diagonal reflection */
+.spine.face .art{opacity:1;z-index:2;left:auto;top:var(--fb);right:var(--fb);bottom:auto;width:calc(var(--fh) - 2 * var(--fb));height:calc(var(--fh) - 2 * var(--fb));object-fit:contain;border-radius:4px}
+/* the clear lid: raised rim, a step where it meets the hinge, and a reflection on the plastic.
+   The artwork is layered above all of this, so nothing is ever drawn over the cover itself. */
 .spine.face::before{z-index:1;border-radius:3px;
   background:
     linear-gradient(125deg,rgba(255,255,255,.26),rgba(255,255,255,.07) 24%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 72%,rgba(255,255,255,.09) 86%,rgba(255,255,255,0)),
@@ -148,9 +149,24 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
     linear-gradient(90deg,rgba(255,255,255,.9) 0 1px,rgba(0,0,0,0) 1px 24%,rgba(120,126,130,.45) 24% calc(24% + 1px),rgba(255,255,255,.7) calc(24% + 1px) calc(24% + 2px),rgba(0,0,0,0) calc(24% + 2px) 66%,rgba(120,126,130,.4) 66% calc(66% + 1px),rgba(255,255,255,.6) calc(66% + 1px) calc(66% + 2px),rgba(0,0,0,0) calc(66% + 2px)),
     linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 20%,rgba(0,0,0,0) 85%,rgba(0,0,0,.08)),
     linear-gradient(90deg,#eef0f1,#d6dadc 50%,#e2e5e6)}
-.spine.face .face-ui{opacity:1;pointer-events:auto;z-index:2;left:auto;right:var(--fb);bottom:var(--fb);width:calc(var(--fh) - 2 * var(--fb))}
+/* controls live on the front edge of the shelf, under the case, like a shelf label */
+.spine.face .face-ui{opacity:1;pointer-events:auto;z-index:3;left:0;right:0;top:auto;bottom:-28px;height:30px;padding:0;background:none;
+  align-items:center;justify-content:center;gap:6px}
+.spine.face .face-ui .pill{height:30px;padding:0 12px;font-size:12px;background:rgba(18,14,12,.88);box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.spine.face .face-ui .fbtn{width:44px;height:30px;border-radius:15px;background:rgba(18,14,12,.88);box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.spine.face .face-ui .fbtn.go{background:var(--accent)}
+.spine.face .face-ui svg{width:17px;height:17px}
 .spine.face .txt,.spine.face .foot{opacity:0}
 .spine.face.lift{transform:none}
+/* an open case always sits above the shelf edge, so its label stays tappable even while pressed */
+.spine.face{z-index:4}
+.spine.face:active{filter:none}
+/* Spotify attribution: the official full logo, white on our dark background, with clear space around it */
+.sp-logo{display:inline-flex;align-items:center;flex:none;padding:11px}
+.sp-logo img{height:22px;width:auto;min-width:70px;display:block}
+.sp-logo.missing img{display:none}
+.sp-logo.missing::after{content:"Spotify logo";display:grid;place-items:center;height:22px;width:92px;white-space:nowrap;border:1px dashed var(--ink-faint);border-radius:4px;
+  font:600 10px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint)}
 .pill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:17px;background:rgba(20,17,15,.62);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font:600 13px Inter,sans-serif;white-space:nowrap}
 .fbtn{width:44px;height:44px;border-radius:22px;display:grid;place-items:center;background:rgba(20,17,15,.62);color:#fff;
@@ -177,7 +193,7 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
 /* ---------- Now playing bar ---------- */
 #np{flex:none;display:flex;align-items:center;gap:14px;margin:6px max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
   padding:8px 10px 8px 8px;background:rgba(31,27,24,.92);border:1px solid var(--line);border-radius:16px;min-height:68px}
-#np img{width:52px;height:52px;border-radius:6px;object-fit:cover;background:var(--panel-2);flex:none}
+#npArt{width:52px;height:52px;border-radius:6px;object-fit:cover;background:var(--panel-2);flex:none}
 #np .meta{min-width:0;flex:1}
 #np .t{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #np .a{font-size:13px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
@@ -199,6 +215,8 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
 .cover{aspect-ratio:1;width:100%;border-radius:8px;object-fit:cover;background:var(--panel-2);box-shadow:0 14px 40px rgba(0,0,0,.5)}
 .info{display:flex;flex-direction:column;min-height:0;max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px)}
 .cover{align-self:start}
+.info .src{margin:-11px 0 -2px -11px}
+.btn.spot{text-decoration:none;color:var(--ink);font-size:13px;letter-spacing:.06em}
 .info .kicker{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
 .info h2{font-family:"Barlow Condensed",sans-serif;font-size:40px;line-height:1.02;margin:6px 0 4px;font-weight:700}
 .info .by{font-size:17px;color:var(--ink-dim)}
@@ -223,6 +241,8 @@ header{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-a
 .sheet{width:min(620px,100%);max-height:100%;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 .sheet h3{margin:0 0 4px;font-family:"Barlow Condensed",sans-serif;font-size:30px;font-weight:700}
 .sheet p{color:var(--ink-dim);font-size:14px;line-height:1.5;margin:6px 0 14px}
+.sheet .fine{font-size:12.5px;color:var(--ink-faint);margin:10px 0 0}
+.sheet .fine b{color:var(--ink-dim)}
 .sheet label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin:16px 0 6px}
 .sheet input[type=text],.sheet select{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--wall-2);padding:0 14px;outline:none;font-size:15px}
 .copy{display:flex;gap:8px}
@@ -297,6 +317,7 @@ body.idle #np{opacity:.6;transition:opacity 1.2s}
       <div class="bar"><i id="npBar"></i></div>
     </div>
     <div class="dev" id="npDev"></div>
+    <span class="sp-logo"><img alt="Spotify" data-logo></span>
     <div class="ctrls">
       <button id="prev" aria-label="Previous"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
       <button id="pp" class="main" aria-label="Play or pause"><svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
@@ -311,12 +332,14 @@ body.idle #np{opacity:.6;transition:opacity 1.2s}
   <div class="detail" id="detail">
     <img class="cover" id="dCover" alt="">
     <div class="info">
+      <div class="src"><span class="sp-logo"><img alt="Spotify" data-logo></span></div>
       <div class="kicker" id="dKick"></div>
       <h2 id="dTitle"></h2>
       <div class="by" id="dArtist"></div>
       <div class="actions">
         <button class="btn primary" id="dPlay"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Play album</button>
         <button class="btn" id="dShuf" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Shuffle</button>
+        <a class="btn spot" id="dOpen" target="_blank" rel="noopener">PLAY ON SPOTIFY</a>
       </div>
       <ul class="tracks" id="dTracks"></ul>
     </div>
@@ -598,6 +621,7 @@ function render(){
   const keepScroll = shelf.scrollLeft;   // a background refresh shouldn't throw you back to the start
   shelf.textContent = "";
   spineById.clear();
+  buildRail();               // fill the A–Z bar first: it changes how much height the shelves get
   const rows = layoutVars();
   const per = Math.ceil(view.length / rows);
   const bookcase = el("div"); bookcase.id = "case";
@@ -610,7 +634,6 @@ function render(){
   shelf.appendChild(bookcase);
   shelf.scrollLeft = keepScroll;
   $("#count").textContent = albums.length + " album" + (albums.length===1?"":"s") + (settings.demo ? " · demo" : "");
-  buildRail(per);
   applyFilter();
   markPlaying();
   if(!albums.length) showEmpty(settings.demo ? "" : "No saved albums yet. Save albums in Spotify and they'll appear here.", false, "Your shelf is empty");
@@ -661,7 +684,7 @@ function makeSpine(a){
   return s;
 }
 
-function buildRail(per){
+function buildRail(){
   const rail = $("#rail"); rail.textContent = "";
   if(settings.sort === "year" || settings.sort === "added"){ rail.style.visibility = "hidden"; return; }
   rail.style.visibility = "visible";
@@ -707,6 +730,7 @@ async function openAlbum(a, spine){
   $("#dCover").src = a.big || a.small || "";
   $("#dTitle").textContent = a.name;
   $("#dArtist").textContent = a.artist;
+  $("#dOpen").href = "https://open.spotify.com/album/" + encodeURIComponent(a.id);
   $("#dKick").textContent = [a.year, a.total ? a.total + " tracks" : ""].filter(Boolean).join(" · ");
   $("#dShuf").setAttribute("aria-pressed", String(shuffleOn));
   renderTracks(a);
@@ -940,7 +964,9 @@ function openSettings(){
       <button class="btn" id="demoBtn"></button>
       <span class="spacer"></span>
       <button class="btn primary" id="doneBtn">Done</button>
-    </div>`;
+    </div>
+    <hr>
+    <p class="fine"><b>Privacy.</b> Album Shelf runs entirely in this browser. Your Spotify sign-in, album list and settings are stored only on this device and are never sent anywhere except to Spotify. Signing out removes them. Album Shelf isn't affiliated with or endorsed by Spotify.</p>`;
   $("#cid").value = settings.clientId;
   $("#ruri").textContent = REDIRECT;
   $("#rowsSel").value = settings.rows;
@@ -954,7 +980,10 @@ function openSettings(){
   const auth = $("#authBtns");
   if(signedIn && !settings.demo){
     const out = el("button","btn","Sign out of Spotify");
-    out.onclick = () => { store.del("token"); store.del("library"); albums = []; render(); showSignIn(); closeSettings(); };
+    out.onclick = () => {
+      ["token","library","libraryAt","librarySig","colours","pkce"].forEach(k => store.del(k));
+      albums = []; playback = null; render(); showSignIn(); closeSettings();
+    };
     auth.appendChild(out);
   }else{
     const inn = el("button","btn primary","Connect Spotify");
@@ -1160,6 +1189,15 @@ let rT; addEventListener("resize", ()=>{ clearTimeout(rT); rT = setTimeout(()=>{
 /* =========================================================
    Boot
    ========================================================= */
+function loadLogos(){
+  // drop Spotify's official white full logo next to index.html as spotify-logo.svg or spotify-logo.png
+  document.querySelectorAll("img[data-logo]").forEach(img => {
+    const tries = ["spotify-logo.svg", "spotify-logo.png"];
+    const next = () => { const f = tries.shift(); if(f) img.src = f; else img.parentNode.classList.add("missing"); };
+    img.onerror = next; img.onload = () => img.parentNode.classList.remove("missing"); next();
+  });
+}
+loadLogos();
 async function boot(){
   clearTimeout(pollT); playback = null; demoState = null;
   if(settings.demo){
