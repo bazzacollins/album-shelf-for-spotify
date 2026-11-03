@@ -26,5 +26,5 @@ If Spotify says your account isn't registered for the app, add your Spotify emai
 
 - **The Client ID isn't in this repository.** It's typed into the page and stored only in the tablet's browser, so the repo holds nothing private.
 - **Sign-in lasts about six months.** Spotify now expires sign-ins after that, so you'll need to tap **Connect Spotify** again roughly twice a year.
-- **New albums appear automatically.** The library refreshes in the background every few hours. Use **Refresh albums** in settings to update it straight away.
-- **Settings** cover how many shelves to show, what a tap on a spine does, the face-out cover, keeping the screen on, and fading the controls when idle.
+- **New albums appear automatically.** While the shelf is on screen it checks Spotify for added or removed albums every 15 minutes, and again when you come back to it. Use **Refresh albums** in settings to update it straight away.
+- **Settings** cover how many shelves to show, what a tap on a spine does, the face-out cover, grey or clear CD cases, keeping the screen on, and fading the controls when idle.

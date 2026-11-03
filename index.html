@@ -458,15 +458,33 @@ function normalise(item){
   };
 }
 
-async function loadLibrary(force=false){
+/* A cheap fingerprint of the library: how many albums, and which was saved most recently.
+   Spotify lists saved albums newest first, so one tiny request tells us if anything changed. */
+const librarySig = (total, newest) => total + "|" + (newest ? newest.added + "|" + newest.id : "");
+let lastLibraryCheck = 0, checkingLibrary = false;
+
+async function checkForNewAlbums(){
+  if(settings.demo || !store.get("token") || checkingLibrary) return;
+  checkingLibrary = true; lastLibraryCheck = Date.now();
+  try{
+    // a full reload twice a day catches anything the fingerprint can't (e.g. one album swapped for another further down)
+    if(Date.now() - (store.get("libraryAt")||0) > 12*3600e3){ await loadLibrary(false, true); return; }
+    const j = await api("/me/albums?limit=1&offset=0");
+    const newest = j.items && j.items[0] ? normalise(j.items[0]) : null;
+    if(librarySig(j.total, newest) !== store.get("librarySig")) await loadLibrary(false, true);
+  }catch(e){ /* try again next time */ }
+  finally{ checkingLibrary = false; }
+}
+
+async function loadLibrary(force=false, quiet=false){
   const cached = store.get("library");
-  if(cached && cached.length && !force){
+  if(cached && cached.length && !force && !quiet){
     albums = cached; render();
-    // quietly refresh in the background if older than 6 hours
-    if(Date.now() - (store.get("libraryAt")||0) < 6*3600e3) return;
-  }else{
-    showEmpty("Fetching your saved albums from Spotify…", true);
+    checkForNewAlbums();          // show the saved shelf at once, then look for changes
+    return;
   }
+  if(!quiet && !(cached && cached.length)) showEmpty("Fetching your saved albums from Spotify…", true);
+  const before = new Set(albums.map(a=>a.id));
   const out = []; let next = "/me/albums?limit=50&offset=0";
   try{
     while(next){
@@ -486,9 +504,18 @@ async function loadLibrary(force=false){
     store.set("library", out.map(a=>Object.assign({},a,{tracks:[],moreTracks:true})));
   }
   store.set("libraryAt", Date.now());
+  store.set("librarySig", librarySig(out.length, out[0]));
   render();
   if(force) toast("Shelf refreshed — " + out.length + " albums");
+  else if(quiet && before.size){
+    const added = out.filter(a=>!before.has(a.id)).length;
+    const removed = before.size - (out.length - added);
+    if(added) toast(added === 1 ? "1 new album on the shelf" : added + " new albums on the shelf");
+    else if(removed > 0) toast(removed === 1 ? "1 album taken off the shelf" : removed + " albums taken off the shelf");
+  }
 }
+// keep looking while the shelf is on screen
+setInterval(()=>{ if(!document.hidden) checkForNewAlbums(); }, 15*60e3);
 
 /* =========================================================
    Spine colours (sampled from cover art, cached)
@@ -562,7 +589,9 @@ function layoutVars(){
 function render(){
   hideEmpty();
   view = albums.slice().sort(sorters[settings.sort] || sorters.artist);
-  const shelf = $("#shelf"); shelf.textContent = "";
+  const shelf = $("#shelf");
+  const keepScroll = shelf.scrollLeft;   // a background refresh shouldn't throw you back to the start
+  shelf.textContent = "";
   spineById.clear();
   const rows = layoutVars();
   const per = Math.ceil(view.length / rows);
@@ -574,6 +603,7 @@ function render(){
     bookcase.appendChild(row);
   }
   shelf.appendChild(bookcase);
+  shelf.scrollLeft = keepScroll;
   $("#count").textContent = albums.length + " album" + (albums.length===1?"":"s") + (settings.demo ? " · demo" : "");
   buildRail(per);
   applyFilter();
@@ -1057,7 +1087,12 @@ async function wake(){
     }else if(!settings.wake && lock){ await lock.release(); lock = null; }
   }catch(e){ lock = null; }
 }
-document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "visible"){ wake(); poll(); } });
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible"){
+    wake(); poll();
+    if(Date.now() - lastLibraryCheck > 5*60e3) checkForNewAlbums();   // coming back to the shelf after a while
+  }
+});
 
 let idleT;
 function bump(){
