@@ -1,6 +1,6 @@
 # Album Shelf (for Spotify)
 
-A CD shelf for your Spotify library, built to run full-screen on a spare tablet.
+A CD shelf for your Spotify library, built to run full-screen on a tablet.
 
 Your saved Spotify albums sit on wooden shelves as CD spines, each coloured from its cover art. Tap a spine and it pulls out face-on with Play and Tracks buttons. The album that's playing turns face-out in the middle of the shelf, and the track list is one tap away. Playback goes through Spotify Connect, so the music comes out of whichever speaker, phone or tablet you pick.
 
