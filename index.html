@@ -687,7 +687,9 @@ async function playAlbum(a, trackIndex){
     await api(`/me/player/play?device_id=${encodeURIComponent(dev.id)}`, {method:"PUT", body:JSON.stringify(body)});
     toast("Playing on " + dev.name);
     previewId = null; lastTouch = 0;
+    pendingPlay = { id: a.id, until: Date.now() + 15000 };
     closeAlbum();
+    markPlaying();          // show the new cover face-out straight away
     setTimeout(poll, 900);
   }catch(e){
     if(e.code === "AUTH") return showSignIn();
@@ -719,7 +721,8 @@ async function poll(){
   try{ playback = await api("/me/player?additional_types=track"); }
   catch(e){ if(e.code === "AUTH"){ return; } }
   updateNP();
-  pollT = setTimeout(poll, playback && playback.is_playing ? 5000 : 12000);
+  // check back quickly while Spotify catches up with a new album
+  pollT = setTimeout(poll, pendingPlay ? 1500 : playback && playback.is_playing ? 5000 : 12000);
 }
 
 let npSnap = 0;
@@ -745,11 +748,28 @@ function updateNP(){
 
 /* ---------- Face-out covers ---------- */
 let playingId = null, previewId = null, previewT = null, lastTouch = 0;
+// Spotify keeps reporting the previous album for a few seconds after a play request.
+// While that request is in flight, trust what we asked for rather than the stale report.
+let pendingPlay = null;   // { id, until }
+
+function reportedAlbumId(){
+  if(!playback) return null;
+  // the album being played as a whole (its context) is the best match for the shelf;
+  // the track's own album can be a different edition of the one that was saved
+  const ctx = playback.context && playback.context.type === "album" && playback.context.uri;
+  const trackAlbum = playback.item && playback.item.album && playback.item.album.uri;
+  const byCtx = ctx && albums.find(x=>x.uri === ctx);
+  if(byCtx) return byCtx.id;
+  const byTrack = trackAlbum && albums.find(x=>x.uri === trackAlbum);
+  return byTrack ? byTrack.id : null;
+}
 
 function markPlaying(){
-  const uri = playback && playback.item && playback.item.album && playback.item.album.uri;
-  const a = uri ? albums.find(x=>x.uri === uri) : null;
-  const id = a ? a.id : null;
+  let id = reportedAlbumId();
+  if(pendingPlay){
+    if(id === pendingPlay.id || Date.now() > pendingPlay.until) pendingPlay = null;
+    else id = pendingPlay.id;
+  }
   const changed = id !== playingId;
   playingId = id;
   if(changed && id && previewId === id) previewId = null;
