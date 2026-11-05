@@ -8,6 +8,22 @@ Your saved Spotify albums sit on wooden shelves as CD spines, each coloured from
 
 Tap **Try demo shelf** to see it without a Spotify account.
 
+![The shelf with the playing album turned face-out in its jewel case](screenshots/now-playing.jpg)
+
+## Screenshots
+
+**Your whole collection at a glance.** Sort by artist, title, year or date added, and jump to any letter.
+
+![Two shelves of CD spines, with the playing album face-out](screenshots/full-shelf.jpg)
+
+**Tap the playing album for its track list.** Play from any track, shuffle, or open the album in Spotify.
+
+![An album's cover and track list, with the playing track highlighted](screenshots/album.jpg)
+
+**Search as you type.** Everything else fades back so the matches stand out.
+
+![A search for "Depe" picking out a Depeche Mode album on the shelf](screenshots/search.jpg)
+
 ## What you need
 
 - **Spotify Premium.** Spotify requires it for apps like this and for remote playback.
