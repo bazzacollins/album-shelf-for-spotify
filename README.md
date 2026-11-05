@@ -8,6 +8,12 @@ Your saved Spotify albums sit on wooden shelves as CD spines, each coloured from
 
 Tap **Try demo shelf** to see it without a Spotify account.
 
+
+
+https://github.com/user-attachments/assets/f2a2085c-7ab2-4f07-be1f-bcc0c5764157
+
+
+
 ![The shelf with the playing album turned face-out in its jewel case](screenshots/now-playing.jpg)
 
 ## Screenshots
